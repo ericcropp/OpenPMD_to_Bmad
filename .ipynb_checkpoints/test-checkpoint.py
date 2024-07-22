@@ -76,10 +76,8 @@ def test_output():
     try: os.remove(temp_loc+example_bmad)
     except: pass
     shutil.copyfile(unedited_loc+example_bmad, temp_loc+example_bmad)
-    Pdict=inspect_bmad_h5(temp_loc+example_bmad)
-    P=ParticleGroup(temp_loc+example_bmad)
-    P.drift_to_z()
-    P.write(temp_loc+example_bmad)
+    Pdict=bmad_to_OpenPMD(temp_loc+example_bmad)
+    
     OpenPMD_to_Bmad(temp_loc+example_bmad,Pdict['timeOffset'])
     
     P2=ParticleGroup(temp_loc+example_bmad)
