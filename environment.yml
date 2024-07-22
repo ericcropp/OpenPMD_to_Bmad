@@ -1,0 +1,19 @@
+# conda env create -f environment.yml
+name: test-dev
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.9
+  - numpy
+  - pydantic>=2.3
+  - pytest
+  - pytest-cov
+  - pytest-benchmark
+  - jupyterlab>=3
+  - matplotlib
+  
+  - pip
+  - pip:
+    - ufmt
+#  - pip:
+#    - git+git://github.com/some/repo
