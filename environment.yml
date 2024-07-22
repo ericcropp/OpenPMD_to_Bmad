@@ -3,7 +3,7 @@ name: test-dev
 channels:
   - conda-forge
 dependencies:
-  - python>=3.9
+  # - python>=3.9
   - numpy
   - pydantic>=2.3
   - pytest
