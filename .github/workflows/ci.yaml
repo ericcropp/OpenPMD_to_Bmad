@@ -95,6 +95,6 @@ jobs:
 
             
       - name: Run tests
-        run: python -m pytest test.py
+        run: pytest test.py
             
                     
