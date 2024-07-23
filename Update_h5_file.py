@@ -29,7 +29,7 @@ def inspect_bmad_h5(filename):
         P['Pz']=f[pp[0]]['momentum']['z'][()]
         P['time']=f[pp[0]]['time'][()]
         P['timeOffset']=f[pp[0]]['timeOffset'][()]
-        P['totalMomentum']=f[pp[0]]['totalMomentum'][()]
+        # P['totalMomentum']=f[pp[0]]['totalMomentum'][()]
        
     return P
 

@@ -87,11 +87,11 @@ def test_output():
     
     assert MSE(P2['x'],Pdict['x'])<np.std(P2['x'])*1e-6
     assert MSE(P2['y'],Pdict['y'])<np.std(P2['y'])*1e-6
-    assert MSE(P2['t'],Pdict['t'])<np.std(P2['t'])*1e-6
-    assert MSE(P2['px'],Pdict['px'])<np.std(P2['px'])*1e-6
-    assert MSE(P2['py'],Pdict['py'])<np.std(P2['py'])*1e-6
-    assert MSE(P2['pz'],Pdict['pz'])<np.std(P2['pz'])*1e-6
-    
+    assert MSE(P2['time'],Pdict['time'])<np.std(P2['time'])*1e-6
+    assert MSE(P2['Px'],Pdict['Px'])<np.std(P2['Px'])*1e-6
+    assert MSE(P2['Py'],Pdict['Py'])<np.std(P2['Py'])*1e-6
+    assert MSE(P2['Pz'],Pdict['Pz'])<np.std(P2['Pz'])*1e-6
+    assert MSE(P2['timeOffset'],Pdict['timeOffset'])<np.mean(P2['timeOffset'])*1e-6
     
     
     
