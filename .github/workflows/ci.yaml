@@ -95,7 +95,9 @@ jobs:
 
             
       - name: Run tests
-        shell: bash
-        run: pytest test.py
-            
+
+        run: |
+            conda activate test-dev
+            pytest test.py
+        
                     
