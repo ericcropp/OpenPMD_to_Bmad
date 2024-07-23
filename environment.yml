@@ -12,7 +12,7 @@ dependencies:
   - jupyterlab>=3
   - matplotlib
   - h5py
-  - pmd-beamphysics
+  - openpmd-beamphysics
   
   - pip
   - pip:
