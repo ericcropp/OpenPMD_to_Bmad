@@ -11,6 +11,7 @@ dependencies:
   - pytest-benchmark
   - jupyterlab>=3
   - matplotlib
+  - h5py
   
   - pip
   - pip:
