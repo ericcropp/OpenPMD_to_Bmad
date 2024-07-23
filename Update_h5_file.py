@@ -16,16 +16,20 @@ def inspect_bmad_h5(filename):
     """
     P={}
     with h5py.File(filename,'r') as f:
+        
+        pp = pmd_beamphysics.readers.particle_paths(f)
+        assert len(pp) == 1, f'Number of particle paths in {filename}: {len(pp)}'
+        data = pmd_beamphysics.particles.load_bunch_data(f[pp[0]])
 
-        P['x']=f['data']['00001']['particles']['position']['x'][()]
-        P['y']=f['data']['00001']['particles']['position']['y'][()]
+        P['x']=f[pp[0]]['position']['x'][()]
+        P['y']=f[pp[0]]['position']['y'][()]
         # P['z']=f['data']['00001']['particles']['position']['z'][()]
-        P['Px']=f['data']['00001']['particles']['momentum']['x'][()]
-        P['Py']=f['data']['00001']['particles']['momentum']['y'][()]
-        P['Pz']=f['data']['00001']['particles']['momentum']['z'][()]
-        P['time']=f['data']['00001']['particles']['time'][()]
-        P['timeOffset']=f['data']['00001']['particles']['timeOffset'][()]
-        P['totalMomentum']=f['data']['00001']['particles']['totalMomentum'][()]
+        P['Px']=f[pp[0]]['momentum']['x'][()]
+        P['Py']=f[pp[0]]['momentum']['y'][()]
+        P['Pz']=f[pp[0]]['momentum']['z'][()]
+        P['time']=f[pp[0]]['time'][()]
+        P['timeOffset']=f[pp[0]]['timeOffset'][()]
+        P['totalMomentum']=f[pp[0]]['totalMomentum'][()]
        
     return P
 
