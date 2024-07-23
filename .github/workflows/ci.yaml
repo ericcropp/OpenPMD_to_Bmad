@@ -73,16 +73,16 @@ jobs:
       #     CACHE_NUMBER: 0
       #   id: cache
 
-      # - name: Setup Mambaforge for real if not cached
-      #   uses: conda-incubator/setup-miniconda@v2
-      #   with:
-      #     miniforge-variant: Mambaforge
-      #     miniforge-version: latest
-      #     activate-environment: test-dev
-      #     use-mamba: true
-      #     python-version: ${{ matrix.python-version }}
-      #     environment-file: environment.yml
-      #   if: steps.cache.outputs.cache-hit != 'true'
+      - name: Setup Mambaforge for real if not cached
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
+          activate-environment: test-dev
+          use-mamba: true
+          python-version: ${{ matrix.python-version }}
+          environment-file: environment.yml
+        if: steps.cache.outputs.cache-hit != 'true'
 
       # - name: setup python
       #   uses: actions/setup-python@v4
