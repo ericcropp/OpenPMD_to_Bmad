@@ -80,17 +80,17 @@ def test_output():
     
     OpenPMD_to_Bmad(temp_loc+example_bmad,Pdict['timeOffset'])
     
-    P2=ParticleGroup(temp_loc+example_bmad)
+    P2=inspect_bmad_h5(temp_loc+example_bmad)
     
     def MSE(x1,x2):
         return np.mean((x1-x2)**2)
     
-    assert MSE(P2['x'],P['x'])<np.std(P['x'])*1e-6
-    assert MSE(P2['y'],P['y'])<np.std(P['y'])*1e-6
-    assert MSE(P2['t'],P['t'])<np.std(P['t'])*1e-6
-    assert MSE(P2['px'],P['px'])<np.std(P['px'])*1e-6
-    assert MSE(P2['py'],P['py'])<np.std(P['py'])*1e-6
-    assert MSE(P2['pz'],P['pz'])<np.std(P['pz'])*1e-6
+    assert MSE(P2['x'],Pdict['x'])<np.std(P2['x'])*1e-6
+    assert MSE(P2['y'],Pdict['y'])<np.std(P2['y'])*1e-6
+    assert MSE(P2['t'],Pdict['t'])<np.std(P2['t'])*1e-6
+    assert MSE(P2['px'],Pdict['px'])<np.std(P2['px'])*1e-6
+    assert MSE(P2['py'],Pdict['py'])<np.std(P2['py'])*1e-6
+    assert MSE(P2['pz'],Pdict['pz'])<np.std(P2['pz'])*1e-6
     
     
     
