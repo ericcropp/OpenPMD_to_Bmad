@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v3      
       - name: Run tests
         run: |
-            $CONDA/bin/conda env update --file environment.yml --name base
+            $CONDA/bin/conda env update --file environment.yml --name base --solver classic
             $CONDA/bin/conda install pytest
             $CONDA/bin/pytest test.py
         
