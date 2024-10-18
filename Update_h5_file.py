@@ -2,6 +2,7 @@ import h5py
 import pmd_beamphysics
 import numpy as np
 from pmd_beamphysics import ParticleGroup
+import os
 
 # Look inside Bmad h5 file
 def inspect_bmad_h5(filename):
@@ -135,8 +136,20 @@ def OpenPMD_to_Bmad(filename,tOffset=None):
                 # If no offset is provided
                 if tOffset is None:
                     weights=data['weight']
+                    if len(f[pp[0]]['time'])==0:
+                        if os.path.isfile('drifted_'+filename):
+                            raise ValueError("No time data exists, but drift_to_z() does not resolve the issue")
+                        else:
+                            P_1 = ParticleGroup(filename)
+                            P_1.drift_to_z()
+                            P_1.write('drifted_'+filename)
+                            
+                            OpenPMD_to_Bmad('drifted_'+filename)
+                            os.rename(('drifted_'+filename),filename)
+                            return
+                        
                     tref=np.average(np.array(f[pp[0]]['time'])[idx],weights=weights[idx])
-                
+
                 #Otherwise just use that
                 else:
                     tref=tOffset
@@ -151,7 +164,6 @@ def OpenPMD_to_Bmad(filename,tOffset=None):
                     
                 # Update time 
                 f[pp[0]]['time'][...]=t1
-                
                 
         else:
             raise ValueError('Not an OpenPMD File!')
