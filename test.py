@@ -25,7 +25,7 @@ def test_PGs():
         shutil.copyfile(unedited_loc + PG, temp_loc + PG)
 
         #Test that this doesn't give an error
-        pmd2bmad.OpenPMD_to_Bmad(temp_loc + example_bmad)
+        pmd2bmad.OpenPMD_to_Bmad(temp_loc + PG)
 
 
 def test_tOffset_exists():
