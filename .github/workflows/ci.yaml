@@ -34,7 +34,7 @@ jobs:
           $CONDA/bin/conda install -y mamba -c conda-forge
       - name: Run tests
         run: |
-            $CONDA/bin/mamba env update --file environment.yml --name base --solver classic
+            $CONDA/bin/mamba env update --file environment.yml --name base
             $CONDA/bin/mamba install pytest
             $CONDA/bin/pytest test.py
         
