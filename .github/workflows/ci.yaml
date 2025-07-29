@@ -36,7 +36,9 @@ jobs:
           environment-file: environment.yml
 
       - name: Install pytest
-        run: mamba install pytest
+        shell: bash -l {0}
+        run: mamba install pytest -y
 
       - name: Run pytest
+        shell: bash -l {0}
         run: pytest test.py
