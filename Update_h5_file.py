@@ -1,8 +1,8 @@
+import os
 import h5py
 import pmd_beamphysics
 import numpy as np
 from pmd_beamphysics import ParticleGroup
-import os
 
 # Look inside Bmad h5 file
 def inspect_bmad_h5(filename):
@@ -17,32 +17,30 @@ def inspect_bmad_h5(filename):
     """
     P={}
     with h5py.File(filename,'r') as f:
-        
         pp = pmd_beamphysics.readers.particle_paths(f)
         assert len(pp) == 1, f'Number of particle paths in {filename}: {len(pp)}'
         data = pmd_beamphysics.particles.load_bunch_data(f[pp[0]])
 
-        P['x']=f[pp[0]]['position']['x'][()]
-        P['y']=f[pp[0]]['position']['y'][()]
+        P['x'] = f[pp[0]]['position']['x'][()]
+        P['y'] = f[pp[0]]['position']['y'][()]
         # P['z']=f['data']['00001']['particles']['position']['z'][()]
-        P['Px']=f[pp[0]]['momentum']['x'][()]
-        P['Py']=f[pp[0]]['momentum']['y'][()]
-        P['Pz']=f[pp[0]]['momentum']['z'][()]
-        P['time']=f[pp[0]]['time'][()]
-        P['timeOffset']=f[pp[0]]['timeOffset'][()]
-        # P['totalMomentum']=f[pp[0]]['totalMomentum'][()]
-       
+        P['Px'] = f[pp[0]]['momentum']['x'][()]
+        P['Py'] = f[pp[0]]['momentum']['y'][()]
+        P['Pz'] = f[pp[0]]['momentum']['z'][()]
+        P['time'] = f[pp[0]]['time'][()]
+        P['timeOffset'] = f[pp[0]]['timeOffset'][()]
+        # P['totalMomentum']=f[pp[0]]['totalMomentum'][()]   
     return P
 
 def all_keys(obj):
     """
     Returns a tuple of all keys in the h5 file.
 
-    
     Argument:
     obj  -- h5 object: contents of an h5 file
 
-    See: https://stackoverflow.com/questions/59897093/get-all-keys-and-its-hierarchy-in-h5-file-using-python-library-h5py
+    See: https://stackoverflow.com/questions/59897093/
+    get-all-keys-and-its-hierarchy-in-h5-file-using-python-library-h5py
     """
     keys=(obj.name,)
     if isinstance(obj, h5py.Group):
@@ -83,13 +81,14 @@ def search_list_partial(l,searchterm):
     x=[True for v in l if searchterm in v]
     if True in x:
         y=True
-    else: 
+    else:
         y=False
     return y
 
 def OpenPMD_to_Bmad(filename,tOffset=None):
     """
-    Convert from OpenPMD to Bmad h5 format after checking to make sure it is not in Bmad format first
+    Convert from OpenPMD to Bmad h5 format after checking 
+    to make sure it is not in Bmad format first
     
     Edits h5 file, but does not return any variables
 
@@ -100,71 +99,77 @@ def OpenPMD_to_Bmad(filename,tOffset=None):
     
     """
     with h5py.File(filename,'r+') as f: # Open h5 file for writing
-        
         #Make sure this is an OpenPMD file
-        keys=all_keys(f)
-        attr_keys=all_attr_keys(keys,f)
-        list_attrs=[k for i in attr_keys.values() for k in i]
-        keys=list(keys)
-        
-        test_openPMD=search_list_partial(list_attrs,'openPMD')
-        # print(test_openPMD)
-        
-        if test_openPMD==True:
-            #Check if it has a timeOffset group
-            
-            test_offset=search_list_partial(keys,'timeOffset')
+        keys = all_keys(f)
+        attr_keys = all_attr_keys(keys,f)
+        list_attrs = [k for i in attr_keys.values() for k in i]
+        keys = list(keys)
+        test_openPMD = search_list_partial(list_attrs,'openPMD')
+
+        if test_openPMD == True:
+            # Check if it has a timeOffset group
+            test_offset = search_list_partial(keys, 'timeOffset')
             # print(test_offset)
-            if test_offset==True:
+            if test_offset == True:
                 raise ValueError('openPMD file already includes timeOffset!')
             else:
                 # Get data about particle status and paths (from OpenPMD library)
                 pp = pmd_beamphysics.readers.particle_paths(f)
                 assert len(pp) == 1, f'Number of particle paths in {filename}: {len(pp)}'
-                data = pmd_beamphysics.particles.load_bunch_data(f[pp[0]])
-                
-                
+                try:
+                    data = pmd_beamphysics.particles.load_bunch_data(f[pp[0]])
+                except:
+                    # Get all possible species from keys' paths
+                    unique_strings = set()
+                    for key in keys:
+                        if key.startswith(pp[0]) and key != pp[0]:
+                            suffix = key[len(pp[0]):].strip('/')
+                            if suffix:
+                                first_part = suffix.split('/')[0]
+                                unique_strings.add(first_part)
+                    species = sorted(unique_strings)
+                    print(species)
+                    assert len(species) == 1, f'Expected one unique string, got {len(species)}: {species}'
+                    pp[0] = pp[0] + '/' + species[0]
+                    data = pmd_beamphysics.particles.load_bunch_data(f[pp[0]])       
                 # filter and do calculations
-                idx=np.array(data['status'])==1
-                
+                idx = np.array(data['status']) == 1
                 # Check tOffset
                 if tOffset is not None:
-                    tOffset=np.array(tOffset)
-                    assert len(np.shape(tOffset))==1,"tOffset not valid"
-                    assert len(tOffset)==len(np.array(f[pp[0]]['time'])), "tOffset has wrong length"
-                
+                    tOffset = np.array(tOffset)
+                    assert len(np.shape(tOffset)) == 1, "tOffset not valid"
+                    assert len(tOffset) == len(np.array(f[pp[0]]['time'])), "tOffset has wrong length"
                 # If no offset is provided
                 if tOffset is None:
-                    weights=data['weight']
-                    if len(f[pp[0]]['time'])==0:
-                        if os.path.isfile('drifted_'+filename):
+                    weights = data['weight']
+                    if len(f[pp[0]]['time']) == 0:
+                        if os.path.isfile('drifted_' + filename):
                             raise ValueError("No time data exists, but drift_to_z() does not resolve the issue")
                         else:
                             P_1 = ParticleGroup(filename)
                             P_1.drift_to_z()
-                            P_1.write('drifted_'+filename)
-                            
-                            OpenPMD_to_Bmad('drifted_'+filename)
-                            os.rename(('drifted_'+filename),filename)
+                            P_1.write('drifted_' + filename)
+                            OpenPMD_to_Bmad('drifted_' + filename)
+                            os.rename(('drifted_' + filename), filename)
                             return
-                        
-                    tref=np.average(np.array(f[pp[0]]['time'])[idx],weights=weights[idx])
+
+                    tref = np.average(np.array(f[pp[0]]['time'])[idx], weights=weights[idx])
 
                 #Otherwise just use that
                 else:
-                    tref=tOffset
-                    
-                t1=np.array(f[pp[0]]['time'])-tref
-                
+                    tref = tOffset
+
+                t1 = np.array(f[pp[0]]['time']) - tref
+
                 # Write timeOffset and metadata
-                f[pp[0]]['timeOffset']=np.zeros(len(t1))+tref
+                f[pp[0]]['timeOffset'] = np.zeros(len(t1)) + tref
                 for key in f[pp[0]]['time'].attrs.keys():
 
-                    f[pp[0]]['timeOffset'].attrs[key]=f[pp[0]]['time'].attrs[key]
-                    
-                # Update time 
-                f[pp[0]]['time'][...]=t1
-                
+                    f[pp[0]]['timeOffset'].attrs[key] = f[pp[0]]['time'].attrs[key]
+
+                # Update time
+                f[pp[0]]['time'][...] = t1
+
         else:
             raise ValueError('Not an OpenPMD File!')
             
@@ -180,8 +185,8 @@ def bmad_to_OpenPMD(filename):
     filename -- string: full path to file to be read and changed
     
     """
-    Pdict=inspect_bmad_h5(filename)
-    P=ParticleGroup(filename)
+    Pdict = inspect_bmad_h5(filename)
+    P = ParticleGroup(filename)
     P.drift_to_z()
     P.write(filename)
     return Pdict
