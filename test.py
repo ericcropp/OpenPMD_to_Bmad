@@ -10,7 +10,7 @@ temp_loc='./temp/'
 unedited_loc='./Files/'
 example_not_OpenPMD='Not_OpenPMD.h5'
 example_bmad='bmad_out.h5'
-PGs = ['New_PG.h5','Old_PG.h5']
+PGs = ['test_new.h5']
 
 
     
