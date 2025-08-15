@@ -53,7 +53,7 @@ def inspect_bmad_h5(filename):
         path = get_particle_paths(f) 
 
         
-        print(path)
+        # print(path)
 
         P['x'] = f[path]['position']['x'][()]
         P['y'] = f[path]['position']['y'][()]
@@ -149,7 +149,7 @@ def OpenPMD_to_Bmad(filename, tOffset=None):
             else:
                 # Get the particle path using helper function
                 pp = get_particle_paths(f)
-                print(pp)
+                # print(pp)
                 # Load particle data using pmd_beamphysics
                 data = pmd_beamphysics.particles.load_bunch_data(f[pp])
                 # Filter for particles with status == 1 (alive)
@@ -162,7 +162,7 @@ def OpenPMD_to_Bmad(filename, tOffset=None):
                 # If no offset is provided, compute it as the weighted average time of alive particles
                 if tOffset is None:
                     weights = data['weight']
-                    print(pp)
+                    # print(pp)
                     # If there is no time data, try to drift to z=0 and retry
                     if len(f[pp + '/time']) == 0:
                         if os.path.isfile('drifted_' + filename):
@@ -210,18 +210,18 @@ def get_species(f,pp):
     """
     unique_strings = set()
     keys = all_keys(f)
-    print(keys)
+    # print(keys)
     
     if '//' in pp:
         pp = pp.replace('//', '/')
-    print(pp)
+    # print(pp)
     for key in keys:
         if key.startswith(pp) and key != pp:
             suffix = key[len(pp):].strip('/')
             if suffix:
                 first_part = suffix.split('/')[0]
                 unique_strings.add(first_part)
-    print(unique_strings)
+    # print(unique_strings)
     species = sorted(unique_strings)
     return species[0] if len(species) == 1 else None
     
@@ -256,12 +256,12 @@ def bmad_to_OpenPMD(filename):
                 if not any(other != p and other.startswith(p.rstrip("/") + "/") for other in ak)
             ]
 
-            print(leaf_paths)
+            # print(leaf_paths)
             # Get species name from the file
             species = get_species(f, pp)
-            print(f"Species: {species}")
-            print(type(species))
-            print(species.encode("utf-8"))
+            # print(f"Species: {species}")
+            # print(type(species))
+            # print(species.encode("utf-8"))
 
             # Find the path to position/x dataset
             matches = [p for p in leaf_paths if '/position/x' in p]
@@ -283,8 +283,8 @@ def bmad_to_OpenPMD(filename):
                     # Remove species from the path
                     newpath = key.replace('/'+species,"")
                     attrs = dict(f[key].attrs) 
-                    print(attrs)
-                    print(f"Moving {key} to {newpath}")
+                    # print(attrs)
+                    # print(f"Moving {key} to {newpath}")
                     f.move(key, newpath)
                     # Restore attributes and set speciesType
                     for k, v in attrs.items():
@@ -308,7 +308,7 @@ def bmad_to_OpenPMD(filename):
             
             # Update attributes for all non-leaf (group) paths
             for key in non_leaf_paths:
-                print(key)
+                # print(key)
                 obj = f[key]
                 if 'speciesType' in obj.attrs:
                     del obj.attrs['speciesType']
@@ -326,7 +326,7 @@ def bmad_to_OpenPMD(filename):
                     del obj.attrs['chargeUnitSI']
                 obj.attrs['chargeUnitSI'] = u 
 
-                print(dict(obj.attrs))
+                # print(dict(obj.attrs))
 
         # Now reload as ParticleGroup and drift to z=0
         P = ParticleGroup(filename)
