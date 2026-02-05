@@ -10,6 +10,7 @@ authors = [
 
 [tool.pytest.ini_options]
 pythonpath = "."
+testpaths = ["test.py"]
 
 [tool.setuptools.packages.find]
 where = ["."]
