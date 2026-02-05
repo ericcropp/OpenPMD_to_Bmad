@@ -8,6 +8,9 @@ authors = [
   {name = "Eric Cropp"}
 ]
 
+[tool.pytest.ini_options]
+pythonpath = "."
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["OpenPMD_to_Bmad*"]

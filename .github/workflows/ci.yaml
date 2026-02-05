@@ -38,6 +38,10 @@ jobs:
         shell: bash -l {0}
         run: mamba install pytest -y
 
+      - name: Install package
+        shell: bash -l {0}
+        run: pip install -e .
+
       - name: Run pytest
         shell: bash -l {0}
         run: pytest test.py

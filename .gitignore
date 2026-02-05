@@ -4,3 +4,4 @@ temp/*
 github/
 .gitignore
 test.ipynb
+/openpmd_to_bmad.egg-info/
