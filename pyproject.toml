@@ -1,0 +1,13 @@
+[project]
+name = "openpmd-to-bmad"
+version = "0.1.0"
+description = "Utilities for converting OpenPMD data to Bmad-compatible format"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+  {name = "Eric Cropp"}
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["OpenPMD_to_Bmad*"]

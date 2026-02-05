@@ -1,3 +1,19 @@
+## Installation:
+Either:
+```bash
+pip install git+https://github.com/ericcropp/OpenPMD_to_Bmad.git
+```
+
+or 
+
+Add the repository as a submodule and ensure the repo root is on your Python path:
+
+```bash
+git submodule add https://github.com/ericcropp/OpenPMD_to_Bmad.git
+```
+This workflow is preserved.
+
+## Usage
 These functions convert from an OpenPMD file to a bmad-compatible file (with time offset tracked).
 
 To do this, call: 
