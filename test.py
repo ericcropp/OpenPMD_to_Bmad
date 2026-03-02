@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from pmd_beamphysics import ParticleGroup
 import shutil
-import Update_h5_file as pmd2bmad
+import OpenPMD_to_Bmad.Update_h5_file as pmd2bmad
 import os
 
 #copy files to new loc
