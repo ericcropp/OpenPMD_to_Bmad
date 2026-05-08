@@ -1,9 +1,9 @@
-import os
+from pathlib import Path
 import h5py
 import pmd_beamphysics
 import numpy as np
 from pmd_beamphysics import ParticleGroup
-
+from pathlib import PurePosixPath
 
 def get_particle_paths(f):
     """
@@ -13,24 +13,26 @@ def get_particle_paths(f):
     f -- h5py object: h5 file to read
     
     Returns:
-    pp -- list of particle paths
+    pp -- str: particle path (HDF5 internal path)
     """
     pp = pmd_beamphysics.readers.particle_paths(f)
     assert len(pp) == 1, f'Number of particle paths in file: {len(pp)}'
-    pp = pp[0]
+    pp = PurePosixPath(pp[0])
     unique_strings = set()
 
     keys = all_keys(f)
     for key in keys:
-        if key.startswith(pp) and key != pp:
-            suffix = key[len(pp):].strip('/')
-            if suffix:
-                first_part = suffix.split('/')[0]
-                unique_strings.add(first_part)
+        key_path = PurePosixPath(key)
+        try:
+            rel = key_path.relative_to(pp)
+        except ValueError:
+            continue
+        if rel.parts:
+            unique_strings.add(rel.parts[0])
     if 'position' not in unique_strings:
         # then there is a species issue
-        pp = pp + '/' + list(unique_strings)[0]
-    return pp
+        pp = pp / list(unique_strings)[0]
+    return str(pp)
 
    
 
@@ -165,14 +167,16 @@ def OpenPMD_to_Bmad(filename, tOffset=None):
                     # print(pp)
                     # If there is no time data, try to drift to z=0 and retry
                     if len(f[pp + '/time']) == 0:
-                        if os.path.isfile('drifted_' + filename):
+                        filepath = Path(filename)
+                        drifted = filepath.parent / f'drifted_{filepath.name}'
+                        if drifted.exists():
                             raise ValueError("No time data exists, but drift_to_z() does not resolve the issue")
                         else:
-                            P_1 = ParticleGroup(filename)
+                            P_1 = ParticleGroup(str(filepath))
                             P_1.drift_to_z()
-                            P_1.write('drifted_' + filename)
-                            OpenPMD_to_Bmad('drifted_' + filename)
-                            os.rename(('drifted_' + filename), filename)
+                            P_1.write(str(drifted))
+                            OpenPMD_to_Bmad(str(drifted))
+                            drifted.rename(filepath)
                             return
                     # Compute reference time as weighted average
                     tref = np.average(np.array(f[pp]['time'])[idx], weights=weights[idx])

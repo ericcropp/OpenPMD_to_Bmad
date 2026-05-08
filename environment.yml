@@ -17,5 +17,3 @@ dependencies:
   - pip
   - pip:
     - ufmt
-#  - pip:
-#    - git+git://github.com/some/repo
