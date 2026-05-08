@@ -5,3 +5,6 @@ github/
 .gitignore
 test.ipynb
 /openpmd_to_bmad.egg-info/
+test_openpmd_to_bmad.py
+active_beam.h5
+2024-10-22_oneBunch.h5
